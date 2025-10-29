@@ -68,4 +68,39 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count > 0;
     }
+
+    // Validate login credentials
+    public boolean validateUser(String username, String password) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {KEY_ID};
+        String selection = KEY_USERNAME + " = ? AND " + KEY_PASSWORD + " = ?";
+        String[] selectionArgs = {username, password};
+
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+        return count > 0;
+    }
+
+    // Get user's full name (for welcome message)
+    public String getUserFullName(String username) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {KEY_FIRST_NAME, KEY_LAST_NAME};
+        String selection = KEY_USERNAME + " = ?";
+        String[] selectionArgs = {username};
+
+        Cursor cursor = db.query(TABLE_USERS, columns, selection, selectionArgs, null, null, null);
+
+        String fullName = "";
+        if (cursor.moveToFirst()) {
+            String firstName = cursor.getString(cursor.getColumnIndexOrThrow(KEY_FIRST_NAME));
+            String lastName = cursor.getString(cursor.getColumnIndexOrThrow(KEY_LAST_NAME));
+            fullName = firstName + "" + lastName;
+        }
+
+        cursor.close();
+        db.close();
+        return fullName;
+    }
 }
