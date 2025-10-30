@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.JollibeeOrderingSystem">
         <activity
+            android:name=".BurgersActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChickenActivity"
             android:exported="false" />
         <activity
