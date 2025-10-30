@@ -10,13 +10,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "JollibeeDB";
     private static final int DATABASE_VERSION = 1;
 
-    // User table constants
+    // Users table constants
     private static final String TABLE_USERS = "users";
-    private static final String KEY_ID = "id";
+    private static final String KEY_USER_ID = "user_id";
     private static final String KEY_FIRST_NAME = "first_name";
     private static final String KEY_LAST_NAME = "last_name";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
+
+    // Products table constants
+    private static final String TABLE_PRODUCTS = "products";
+    private static final String KEY_PRODUCT_ID = "product_id";
+    private static final String KEY_PRODUCT_NAME = "product_name";
+    private static final String KEY_PRODUCT_PRICE = "product_price";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -26,19 +32,31 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // Create users table
         String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + KEY_FIRST_NAME + " TEXT,"
                 + KEY_LAST_NAME + " TEXT,"
                 + KEY_USERNAME + " TEXT UNIQUE,"
                 + KEY_PASSWORD + " TEXT" + ")";
         db.execSQL(CREATE_USERS_TABLE);
+
+        // Create products table
+        String CREATE_PRODUCTS_TABLE = "CREATE TABLE " + TABLE_PRODUCTS + "("
+                + KEY_PRODUCT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_PRODUCT_NAME + " TEXT UNIQUE,"
+                + KEY_PRODUCT_PRICE + " REAL" + ")";
+        db.execSQL(CREATE_PRODUCTS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
         onCreate(db);
     }
+
+    /* ____________________
+    Users table methods
+    */
 
     // Register new user
     public boolean registerUser(String firstName, String lastName, String username, String password) {
@@ -55,10 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // Check if username already exists
-    public boolean checkUsernameExists(String username)
-    {
+    public boolean checkUsernameExists(String username) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] columns = {KEY_ID};
+        String[] columns = {KEY_USER_ID};
         String selection = KEY_USERNAME + " = ?";
         String[] selectionArgs = {username};
 
@@ -72,7 +89,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Validate login credentials
     public boolean validateUser(String username, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String[] columns = {KEY_ID};
+        String[] columns = {KEY_USER_ID};
         String selection = KEY_USERNAME + " = ? AND " + KEY_PASSWORD + " = ?";
         String[] selectionArgs = {username, password};
 
@@ -102,5 +119,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return fullName;
+    }
+
+    /* ____________________
+    Products table methods
+    */
+
+    // Adds a new product if it doesn't already exist
+    public boolean addProduct(String product_name, double cost) {
+        // Use the product name to check existence, as product_id is auto-incremented.
+        if (checkProductExistsByName(product_name)) {
+            // Product already exists, no need to add again
+            return true;
+        }
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        // KEY_PRODUCT_ID is AUTOINCREMENT, so we skip it here.
+        values.put(KEY_PRODUCT_NAME, product_name);
+        values.put(KEY_PRODUCT_PRICE, cost);
+
+        // Insert the row
+        long result = db.insert(TABLE_PRODUCTS, null, values);
+        db.close();
+        // If result is -1, the insertion failed.
+        return result != -1;
+    }
+
+    // Helper method to check if product already exists
+    public boolean checkProductExistsByName(String product_name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {KEY_PRODUCT_ID};
+        String selection = KEY_PRODUCT_NAME + " = ?";
+        String[] selectionArgs = {product_name};
+
+        Cursor cursor = db.query(TABLE_PRODUCTS, columns, selection, selectionArgs, null, null, null);
+        int count = cursor.getCount();
+        cursor.close();
+        db.close();
+        return count > 0;
     }
 }
