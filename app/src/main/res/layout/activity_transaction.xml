@@ -169,7 +169,7 @@
 
             </androidx.cardview.widget.CardView>
 
-            <!-- Desserts Category -->
+            <!-- Desserts and Drinks Category -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardDesserts"
                 android:layout_width="0dp"
@@ -196,44 +196,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Desserts"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="#333333"
-                        android:layout_marginTop="8dp" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Drinks Category -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardDrinks"
-                android:layout_width="0dp"
-                android:layout_height="150dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@android:color/white">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:padding="16dp">
-
-                    <ImageView
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@mipmap/ic_drinks" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Drinks"
+                        android:text="Desserts and Drinks"
+                        android:textAlignment="center"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         android:textColor="#333333"
