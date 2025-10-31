@@ -7,12 +7,14 @@ import java.util.Map;
 public class CartManager {
     private static CartManager instance;
     private Map<Integer, OrderItem> cartItems;
-    private double totalAmount;
+    private double totalAmount, totalFoodPrice, vat;
     private static final double VAT_RATE = 0.10; // 12% VAT
 
     // Singleton constructor
     private CartManager() {
         cartItems = new HashMap<>();
+        totalFoodPrice = 0.0;
+        vat = 0.0;
         totalAmount = 0.0;
     }
 
@@ -60,16 +62,24 @@ public class CartManager {
 
     // Calculate all totals
     private void calculateTotals() {
-        totalAmount = 0.0;
+        totalFoodPrice = 0.0;
         for (OrderItem item : cartItems.values()) {
-            totalAmount += item.getProductCost() * item.getProductQuantity();
+            totalFoodPrice += item.getProductCost() * item.getProductQuantity();
         }
+    }
+
+    public void calculateVAT() {
+        vat = totalAmount * VAT_RATE;
+    }
+
+    public void calculateTotalAmount() {
+        totalAmount = totalAmount + vat;
     }
 
     // Clear entire cart
     public void clearCart() {
         cartItems.clear();
-        totalAmount = 0.0;
+        totalFoodPrice = 0.0;
     }
 
     // Getters
@@ -86,15 +96,7 @@ public class CartManager {
     }
 
     public double getTotalFoodPrice() {
-        return totalAmount;
-    }
-
-    public double getVAT() {
-        return totalAmount * VAT_RATE;
-    }
-
-    public double getGrandTotal() {
-        return totalAmount + getVAT();
+        return totalFoodPrice;
     }
 
     public int getTotalItems() {
