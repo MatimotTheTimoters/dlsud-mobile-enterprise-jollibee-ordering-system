@@ -159,4 +159,44 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count > 0;
     }
+
+    // Add this method to your DatabaseHelper class
+    public void initializeProductsIfEmpty() {
+        if (isProductsTableEmpty()) {
+            // Chicken Products
+            addProduct("Chickenjoy Bucket", 299.00);
+            addProduct("1-pc Chickenjoy", 89.00);
+            addProduct("2-pc Chickenjoy", 159.00);
+            addProduct("Spaghetti with Chicken", 129.00);
+
+            // Burger Products
+            addProduct("Yumburger", 39.00);
+            addProduct("Cheesy Yumburger", 49.00);
+            addProduct("Bacon Cheesy Yumburger", 59.00);
+            addProduct("Champ Burger", 99.00);
+
+            // Noodle Products
+            addProduct("Jolly Spaghetti", 59.00);
+            addProduct("Palabok Fiesta", 79.00);
+            addProduct("Shanghai Rolls + Noodles", 129.00);
+            addProduct("Beefy Macaroni Soup", 89.00);
+
+            // Dessert & Drink Products
+            addProduct("Peach Mango Pie", 39.00);
+            addProduct("Chocolate Sundae", 29.00);
+            addProduct("Pineapple Juice", 25.00);
+            addProduct("Iced Tea", 20.00);
+        }
+    }
+
+    // Add this helper method to check if products table is empty
+    public boolean isProductsTableEmpty() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_PRODUCTS, null);
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return count == 0;
+    }
 }
