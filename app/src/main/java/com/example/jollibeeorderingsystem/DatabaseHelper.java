@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "JollibeeDB";
     private static final int DATABASE_VERSION = 1;
@@ -160,7 +162,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return count > 0;
     }
 
-    // Add this method to your DatabaseHelper class
+    // Initialize products if not yet in table
     public void initializeProductsIfEmpty() {
         if (isProductsTableEmpty()) {
             // Chicken Products
@@ -216,5 +218,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return productId;
+    }
+
+    // Get product details by name
+    public ArrayList<Object> getProductDetailsByName(String productName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {KEY_PRODUCT_ID, KEY_PRODUCT_NAME, KEY_PRODUCT_PRICE};
+        String selection = KEY_PRODUCT_NAME + " = ?";
+        String[] selectionArgs = {productName};
+
+        Cursor cursor = db.query(TABLE_PRODUCTS, columns, selection, selectionArgs, null, null, null);
+
+        ArrayList<Object> productDetails = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            int id = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRODUCT_ID));
+            String name = cursor.getString(cursor.getColumnIndexOrThrow(KEY_PRODUCT_NAME));
+            double price = cursor.getDouble(cursor.getColumnIndexOrThrow(KEY_PRODUCT_PRICE));
+
+            productDetails.add(id);
+            productDetails.add(name);
+            productDetails.add(price);
+        }
+        cursor.close();
+        db.close();
+        return productDetails;
     }
 }
