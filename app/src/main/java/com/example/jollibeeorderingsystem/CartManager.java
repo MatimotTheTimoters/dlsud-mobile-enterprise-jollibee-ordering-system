@@ -91,20 +91,24 @@ public class CartManager {
         return new ArrayList<>(cartItems.values());
     }
 
-    public double getTotalAmount() {
-        return totalAmount;
-    }
-
-    public double getTotalFoodPrice() {
-        return totalFoodPrice;
-    }
-
     public int getTotalItems() {
         int total = 0;
         for (OrderItem item : cartItems.values()) {
             total += item.getProductQuantity();
         }
         return total;
+    }
+
+    public double getTotalFoodPrice() {
+        return totalFoodPrice;
+    }
+
+    public double getVAT() {
+        return vat;
+    }
+
+    public double getTotalAmount() {
+        return totalAmount;
     }
 
     // Check if cart is empty
