@@ -130,7 +130,7 @@ public class BurgersActivity extends AppCompatActivity {
     private void updateCartDisplay() {
         CartManager cart = CartManager.getInstance();
         int totalItems = cart.getTotalItems();
-        double totalCost = cart.getGrandTotal();
+        double totalCost = cart.getTotalFoodPrice();
 
         tvTotalItems.setText(String.valueOf(totalItems));
         tvTotalCost.setText(String.format("₱%.2f", totalCost));
