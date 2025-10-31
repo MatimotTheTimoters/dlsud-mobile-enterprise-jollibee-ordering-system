@@ -26,6 +26,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String KEY_PRODUCT_NAME = "product_name";
     private static final String KEY_PRODUCT_PRICE = "product_price";
 
+    // Order table constants
+    private static final String TABLE_ORDERS = "orders";
+    private static final String KEY_ORDER_ID = "order_id";
+    private static final String KEY_ORDER_DATE = "order_date";
+    private static final String KEY_TOTAL_FOOD_PRICE = "total_food_price";
+    private static final String KEY_TOTAL_AMOUNT = "total_amount";
+    private static final String KEY_VAT = "vat";
+
+    // Order_Items table constants
+    private static final String TABLE_ORDER_ITEMS = "order_items";
+    private static final String KEY_ORDER_ITEM_ID = "order_item_id";
+    private static final String KEY_ORDER_ID_FK = "order_id_fk";
+    private static final String KEY_PRODUCT_ID_FK = "product_id_fk";
+    private static final String KEY_QUANTITY = "quantity";
+    private static final String KEY_ITEM_PRICE = "item_price";
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -47,12 +63,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + KEY_PRODUCT_NAME + " TEXT UNIQUE,"
                 + KEY_PRODUCT_PRICE + " REAL" + ")";
         db.execSQL(CREATE_PRODUCTS_TABLE);
+
+        // Create orders table
+        String CREATE_ORDERS_TABLE = "CREATE TABLE " + TABLE_ORDERS + "("
+                + KEY_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_ORDER_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP,"
+                + KEY_TOTAL_FOOD_PRICE + " REAL,"
+                + KEY_VAT + " REAL,"
+                + KEY_TOTAL_AMOUNT + " REAL" + ")";
+        db.execSQL(CREATE_ORDERS_TABLE);
+
+        // Create order_items table
+        String CREATE_ORDER_ITEMS_TABLE = "CREATE TABLE " + TABLE_ORDER_ITEMS + "("
+                + KEY_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + KEY_ORDER_ID_FK + " INTEGER,"
+                + KEY_PRODUCT_ID_FK + " INTEGER,"
+                + KEY_QUANTITY + " INTEGER,"
+                + KEY_ITEM_PRICE + " REAL,"
+                + "FOREIGN KEY(" + KEY_ORDER_ID_FK + ") REFERENCES " + TABLE_ORDERS + "(" + KEY_ORDER_ID + "),"
+                + "FOREIGN KEY(" + KEY_PRODUCT_ID_FK + ") REFERENCES " + TABLE_PRODUCTS + "(" + KEY_PRODUCT_ID + ")" + ")";
+        db.execSQL(CREATE_ORDER_ITEMS_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDERS);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER_ITEMS);
         onCreate(db);
     }
 
@@ -242,5 +280,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         db.close();
         return productDetails;
+    }
+
+    /* ____________________
+    Orders table methods
+    */
+
+    // Create new order and return order ID
+    public long createOrder(double totalFoodPrice, double vat, double totalAmount) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_TOTAL_FOOD_PRICE, totalFoodPrice);
+        values.put(KEY_TOTAL_AMOUNT, totalAmount);
+        values.put(KEY_VAT, vat);
+
+        long orderId = db.insert(TABLE_ORDERS, null, values);
+        db.close();
+        return orderId;
+    }
+
+    /* ____________________
+    Order Items table methods
+    */
+
+    // Add order item
+    public boolean addOrderItem(long orderId, int productId, int quantity, double itemPrice) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(KEY_ORDER_ID_FK, orderId);
+        values.put(KEY_PRODUCT_ID_FK, productId);
+        values.put(KEY_QUANTITY, quantity);
+        values.put(KEY_ITEM_PRICE, itemPrice);
+
+        long result = db.insert(TABLE_ORDER_ITEMS, null, values);
+        db.close();
+        return result != -1;
     }
 }
