@@ -153,7 +153,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             String firstName = cursor.getString(cursor.getColumnIndexOrThrow(KEY_FIRST_NAME));
             String lastName = cursor.getString(cursor.getColumnIndexOrThrow(KEY_LAST_NAME));
-            fullName = firstName + "" + lastName;
+            fullName = firstName + " " + lastName;
         }
 
         cursor.close();
