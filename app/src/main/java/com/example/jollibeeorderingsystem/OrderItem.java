@@ -11,15 +11,34 @@ public class OrderItem {
         this.productQuantity = productQuantity;
     }
 
+    // Getters
     public String getProductName() {
-        return this.productName;
+        return productName;
     }
 
     public double getProductCost() {
-        return this.productCost;
+        return productCost;
     }
 
     public int getProductQuantity() {
-        return this.productQuantity;
+        return productQuantity;
+    }
+
+    public double getTotalPrice() {
+        return productCost * productQuantity;
+    }
+
+    // Setters
+    public void setProductQuantity(int productQuantity) {
+        this.productQuantity = productQuantity;
+    }
+
+    public void setProductCost(double productCost) {
+        this.productCost = productCost;
+    }
+
+    @Override
+    public String toString() {
+        return productName + " x" + productQuantity + " - ₱" + String.format("%.2f", getTotalPrice());
     }
 }
