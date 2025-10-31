@@ -199,4 +199,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
         return count == 0;
     }
+
+    // Gets product ID by passing name (used by CartManager to add products to cart)
+    public int getProductIdByName(String productName) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String[] columns = {KEY_PRODUCT_ID};
+        String selection = KEY_PRODUCT_NAME + " = ?";
+        String[] selectionArgs = {productName};
+
+        Cursor cursor = db.query(TABLE_PRODUCTS, columns, selection, selectionArgs, null, null, null);
+
+        int productId = -1;
+        if (cursor.moveToFirst()) {
+            productId = cursor.getInt(cursor.getColumnIndexOrThrow(KEY_PRODUCT_ID));
+        }
+        cursor.close();
+        db.close();
+        return productId;
+    }
 }
