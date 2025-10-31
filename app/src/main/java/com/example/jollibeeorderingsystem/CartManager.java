@@ -7,8 +7,8 @@ import java.util.Map;
 public class CartManager {
     private static CartManager instance;
     private Map<Integer, OrderItem> cartItems;
-    private double totalAmount, totalFoodPrice, vat;
-    private static final double VAT_RATE = 0.10; // 12% VAT
+    private double totalFoodPrice, vat, totalAmount;
+    private static final double VAT_RATE = 0.12; // Fixed: 12% VAT
 
     // Singleton constructor
     private CartManager() {
@@ -34,7 +34,7 @@ public class CartManager {
         } else {
             cartItems.put(productId, new OrderItem(productName, price, quantity));
         }
-        calculateTotals();
+        calculateAllTotals(); // Call the method that calculates everything
     }
 
     // Update specific item quantity
@@ -44,7 +44,7 @@ public class CartManager {
                 removeFromCart(productId);
             } else {
                 cartItems.get(productId).setProductQuantity(quantity);
-                calculateTotals();
+                calculateAllTotals(); // Call the method that calculates everything
             }
         }
     }
@@ -52,7 +52,7 @@ public class CartManager {
     // Remove item from cart
     public void removeFromCart(int productId) {
         cartItems.remove(productId);
-        calculateTotals();
+        calculateAllTotals(); // Call the method that calculates everything
     }
 
     // Get specific item from cart
@@ -60,26 +60,34 @@ public class CartManager {
         return cartItems.get(productId);
     }
 
-    // Calculate all totals
-    private void calculateTotals() {
+    // Calculate all totals in one method
+    private void calculateAllTotals() {
+        calculateTotalFoodPrice();
+        calculateVAT();
+        calculateTotalAmount();
+    }
+
+    private void calculateTotalFoodPrice() {
         totalFoodPrice = 0.0;
         for (OrderItem item : cartItems.values()) {
             totalFoodPrice += item.getProductCost() * item.getProductQuantity();
         }
     }
 
-    public void calculateVAT() {
-        vat = totalAmount * VAT_RATE;
+    private void calculateVAT() {
+        vat = totalFoodPrice * VAT_RATE;
     }
 
-    public void calculateTotalAmount() {
-        totalAmount = totalAmount + vat;
+    private void calculateTotalAmount() {
+        totalAmount = totalFoodPrice + vat;
     }
 
     // Clear entire cart
     public void clearCart() {
         cartItems.clear();
         totalFoodPrice = 0.0;
+        vat = 0.0;
+        totalAmount = 0.0;
     }
 
     // Getters
