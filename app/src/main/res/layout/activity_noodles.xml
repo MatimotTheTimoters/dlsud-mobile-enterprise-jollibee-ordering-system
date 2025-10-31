@@ -52,14 +52,14 @@
                 android:alignmentMode="alignBounds"
                 android:columnCount="2"
                 android:columnOrderPreserved="false"
-                android:rowCount="3"
+                android:rowCount="2"
                 android:useDefaultMargins="true">
 
                 <!-- Jolly Spaghetti -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardJollySpaghetti"
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="260dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
@@ -155,7 +155,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardPalabok"
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="260dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
@@ -246,7 +246,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardShanghaiNoodles"
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="260dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
@@ -337,7 +337,7 @@
                 <androidx.cardview.widget.CardView
                     android:id="@+id/cardBeefyMacaroni"
                     android:layout_width="0dp"
-                    android:layout_height="220dp"
+                    android:layout_height="260dp"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
