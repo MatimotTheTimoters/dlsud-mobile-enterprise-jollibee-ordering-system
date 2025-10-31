@@ -8,9 +8,9 @@ public class CartManager {
     private static CartManager instance;
     private Map<Integer, OrderItem> cartItems;
     private double totalAmount;
-    private static final double VAT_RATE = 0.12; // 12% VAT
+    private static final double VAT_RATE = 0.10; // 12% VAT
 
-    // Private constructor for singleton
+    // Singleton constructor
     private CartManager() {
         cartItems = new HashMap<>();
         totalAmount = 0.0;
