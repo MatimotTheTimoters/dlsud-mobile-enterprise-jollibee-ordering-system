@@ -114,8 +114,11 @@ public class CheckoutActivity extends AppCompatActivity {
         double vat = cartManager.getVAT();
         double totalAmount = cartManager.getTotalAmount();
 
-        // Create new Order and insert to Order table
-        long orderId = databaseHelper.createOrder(totalFoodPrice, vat, totalAmount);
+        // Get current date and time
+        String currentDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        // Create new Order and insert to Order table with date
+        long orderId = databaseHelper.createOrder(currentDateTime, totalFoodPrice, vat, totalAmount);
 
         if (orderId == -1) {
             Toast.makeText(this, "Failed to create order!", Toast.LENGTH_SHORT).show();
@@ -143,8 +146,12 @@ public class CheckoutActivity extends AppCompatActivity {
         }
 
         if (allItemsAdded) {
-            // Show success toast
-            Toast.makeText(this, "Order confirmed successfully! Order ID: " + orderId, Toast.LENGTH_LONG).show();
+            // Show success toast with order details including date
+            String successMessage = String.format("Order confirmed successfully!\nOrder ID: %d\nDate: %s",
+                    orderId,
+                    new SimpleDateFormat("MMM dd, yyyy hh:mm a", Locale.getDefault()).format(new Date())
+            );
+            Toast.makeText(this, successMessage, Toast.LENGTH_LONG).show();
 
             // Clear cart after successful order
             cartManager.clearCart();

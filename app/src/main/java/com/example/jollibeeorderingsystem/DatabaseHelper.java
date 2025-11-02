@@ -6,7 +6,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "JollibeeDB";
@@ -49,39 +52,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // Create users table
-        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "("
-                + KEY_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_FIRST_NAME + " TEXT,"
-                + KEY_LAST_NAME + " TEXT,"
-                + KEY_USERNAME + " TEXT UNIQUE,"
-                + KEY_PASSWORD + " TEXT" + ")";
+        String CREATE_USERS_TABLE = "CREATE TABLE " + TABLE_USERS + "(" + KEY_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_FIRST_NAME + " TEXT," + KEY_LAST_NAME + " TEXT," + KEY_USERNAME + " TEXT UNIQUE," + KEY_PASSWORD + " TEXT" + ")";
         db.execSQL(CREATE_USERS_TABLE);
 
         // Create products table
-        String CREATE_PRODUCTS_TABLE = "CREATE TABLE " + TABLE_PRODUCTS + "("
-                + KEY_PRODUCT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_PRODUCT_NAME + " TEXT UNIQUE,"
-                + KEY_PRODUCT_PRICE + " REAL" + ")";
+        String CREATE_PRODUCTS_TABLE = "CREATE TABLE " + TABLE_PRODUCTS + "(" + KEY_PRODUCT_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_PRODUCT_NAME + " TEXT UNIQUE," + KEY_PRODUCT_PRICE + " REAL" + ")";
         db.execSQL(CREATE_PRODUCTS_TABLE);
 
         // Create orders table
-        String CREATE_ORDERS_TABLE = "CREATE TABLE " + TABLE_ORDERS + "("
-                + KEY_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_ORDER_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP,"
-                + KEY_TOTAL_FOOD_PRICE + " REAL,"
-                + KEY_VAT + " REAL,"
-                + KEY_TOTAL_AMOUNT + " REAL" + ")";
+        String CREATE_ORDERS_TABLE = "CREATE TABLE " + TABLE_ORDERS + "(" + KEY_ORDER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ORDER_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP," + KEY_TOTAL_FOOD_PRICE + " REAL," + KEY_VAT + " REAL," + KEY_TOTAL_AMOUNT + " REAL" + ")";
         db.execSQL(CREATE_ORDERS_TABLE);
 
         // Create order_items table
-        String CREATE_ORDER_ITEMS_TABLE = "CREATE TABLE " + TABLE_ORDER_ITEMS + "("
-                + KEY_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + KEY_ORDER_ID_FK + " INTEGER,"
-                + KEY_PRODUCT_ID_FK + " INTEGER,"
-                + KEY_QUANTITY + " INTEGER,"
-                + KEY_ITEM_PRICE + " REAL,"
-                + "FOREIGN KEY(" + KEY_ORDER_ID_FK + ") REFERENCES " + TABLE_ORDERS + "(" + KEY_ORDER_ID + "),"
-                + "FOREIGN KEY(" + KEY_PRODUCT_ID_FK + ") REFERENCES " + TABLE_PRODUCTS + "(" + KEY_PRODUCT_ID + ")" + ")";
+        String CREATE_ORDER_ITEMS_TABLE = "CREATE TABLE " + TABLE_ORDER_ITEMS + "(" + KEY_ORDER_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_ORDER_ID_FK + " INTEGER," + KEY_PRODUCT_ID_FK + " INTEGER," + KEY_QUANTITY + " INTEGER," + KEY_ITEM_PRICE + " REAL," + "FOREIGN KEY(" + KEY_ORDER_ID_FK + ") REFERENCES " + TABLE_ORDERS + "(" + KEY_ORDER_ID + ")," + "FOREIGN KEY(" + KEY_PRODUCT_ID_FK + ") REFERENCES " + TABLE_PRODUCTS + "(" + KEY_PRODUCT_ID + ")" + ")";
         db.execSQL(CREATE_ORDER_ITEMS_TABLE);
     }
 
@@ -229,7 +212,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
-    // Add this helper method to check if products table is empty
+    // Checks if products table is empty
     public boolean isProductsTableEmpty() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_PRODUCTS, null);
@@ -286,10 +269,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     Orders table methods
     */
 
+    /* ____________________
+    Orders table methods
+    */
+
     // Create new order and return order ID
-    public long createOrder(double totalFoodPrice, double vat, double totalAmount) {
+    public long createOrder(String orderDate, double totalFoodPrice, double vat, double totalAmount) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
+        values.put(KEY_ORDER_DATE, orderDate);
         values.put(KEY_TOTAL_FOOD_PRICE, totalFoodPrice);
         values.put(KEY_TOTAL_AMOUNT, totalAmount);
         values.put(KEY_VAT, vat);
@@ -297,6 +285,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         long orderId = db.insert(TABLE_ORDERS, null, values);
         db.close();
         return orderId;
+    }
+
+    // Overloaded method that uses current timestamp if no date provided
+    public long createOrder(double totalFoodPrice, double vat, double totalAmount) {
+        // Use current date/time as default
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
+        return createOrder(currentDate, totalFoodPrice, vat, totalAmount);
     }
 
     /* ____________________
